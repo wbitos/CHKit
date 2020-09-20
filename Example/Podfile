@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'CHKit_Example' do
+  pod 'CHKit', :path => '../'
+
+  target 'CHKit_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
