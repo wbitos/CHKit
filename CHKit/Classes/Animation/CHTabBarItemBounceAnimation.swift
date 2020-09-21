@@ -9,7 +9,7 @@
 import UIKit
 import RAMAnimatedTabBarController
 
-class CHTabBarItemBounceAnimation: RAMItemAnimation {
+open class CHTabBarItemBounceAnimation: RAMItemAnimation {
     @IBInspectable open var iconSelectedImage: UIImage?
     @IBInspectable open var iconNormalImage: UIImage?
     @IBInspectable open var textNormalColor: UIColor?

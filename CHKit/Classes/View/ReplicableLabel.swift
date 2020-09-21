@@ -8,10 +8,10 @@
 
 import UIKit
 
-class ReplicableLabel: UILabel {
-    @IBInspectable var replicableText: String? = nil
+open class ReplicableLabel: UILabel {
+    @IBInspectable open var replicableText: String? = nil
     
-    override func awakeFromNib() {
+    open override func awakeFromNib() {
         super.awakeFromNib()
         self.isUserInteractionEnabled = true
         self.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(showMenuAction(_:))))
@@ -24,11 +24,11 @@ class ReplicableLabel: UILabel {
     }
     */
 
-    override var canBecomeFirstResponder: Bool {
+    open override var canBecomeFirstResponder: Bool {
         return true
     }
     
-    @IBAction func showMenuAction(_ sender: Any?) {
+    @IBAction open func showMenuAction(_ sender: Any?) {
         self.becomeFirstResponder()
         let menu = UIMenuController.shared
         let copyItem = UIMenuItem(title: "复制", action: #selector(copyTextAction(_:)))
@@ -37,14 +37,14 @@ class ReplicableLabel: UILabel {
         menu.setMenuVisible(true, animated: true)
     }
     
-    override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+    override open func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
         if action == #selector(copyTextAction(_:)) {
             return true
         }
         return false
     }
     
-    @IBAction func copyTextAction(_ sender: Any?) {
+    @IBAction open func copyTextAction(_ sender: Any?) {
         UIPasteboard.general.string = self.replicableText ?? (self.text ?? self.attributedText?.string)
     }
 }

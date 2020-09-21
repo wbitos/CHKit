@@ -8,9 +8,9 @@
 
 import UIKit
 
-class CHNavigationController: UINavigationController {
+open class CHNavigationController: UINavigationController {
 
-    override func viewDidLoad() {
+    open override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
@@ -21,7 +21,7 @@ class CHNavigationController: UINavigationController {
     }
     
 
-    override var preferredStatusBarStyle : UIStatusBarStyle {
+    open override var preferredStatusBarStyle : UIStatusBarStyle {
         return self.topViewController?.preferredStatusBarStyle ?? .lightContent
     }
     /*

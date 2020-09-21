@@ -8,9 +8,9 @@
 
 import UIKit
 
-class SharedConfig: NSObject {
+open class SharedConfig: NSObject {
     @objc static let shared = SharedConfig()
 
-    var app = AppConfig()
-    var sys = SysConfig()
+    public var app = AppConfig()
+    public var sys = SysConfig()
 }

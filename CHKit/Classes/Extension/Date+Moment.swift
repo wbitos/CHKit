@@ -9,7 +9,7 @@
 import UIKit
 
 extension Date {
-    func moment() -> String {
+    public func moment() -> String {
         let cal = Calendar.current
         
         let now = Date()

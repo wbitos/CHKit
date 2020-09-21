@@ -8,7 +8,7 @@
 
 import UIKit
 
-class DBLimit: NSObject {
-    var offset: Int64 = 0
-    var count: Int64 = 0
+open class DBLimit: NSObject {
+    open var offset: Int64 = 0
+    open var count: Int64 = 0
 }

@@ -8,7 +8,7 @@
 
 import UIKit
 
-extension CHModel {
+public extension CHModel {
     static func cachePath(forKey key: String) -> URL {
         let cacheDir = URL(fileURLWithPath: DeviceConfig.cache(domain: "com.overnight.blueeyed"))
         let filemanager = FileManager.default
@@ -33,7 +33,7 @@ extension CHModel {
     }
 }
 
-extension Array where Element: CHModel {
+public extension Array where Element: CHModel {
     @discardableResult
     func cache(key: String) -> Bool {
         let cachePath = CHModel.cachePath(forKey: key)

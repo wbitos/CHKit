@@ -9,7 +9,7 @@
 import UIKit
 import FCUUID
 
-class AppConfig: NSObject {
+open class AppConfig: NSObject {
     enum Channel: String {
         case appStore = "App Store"
         case development = "Test"
@@ -21,34 +21,34 @@ class AppConfig: NSObject {
     var channel: String = AppConfig.Channel.appStore.rawValue
     #endif
     
-    func name() -> String {
+    open func name() -> String {
         return (Bundle.main.infoDictionary?["CFBundleDisplayName"] as? String) ?? "吉娃娃"
     }
     
-    func version() -> String {
+    open func version() -> String {
         return (Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String) ?? "1.0.0"
     }
     
-    func build() -> Int {
+    open func build() -> Int {
         return Int((Bundle.main.infoDictionary?["CFBundleVersion"] as? String) ?? "0") ?? 0
     }
     
-    func udid() -> String {
+    open func udid() -> String {
         return FCUUID.uuidForDevice() ?? ""
     }
     
-    func bundleIdentify() -> String {
+    open func bundleIdentify() -> String {
         return (Bundle.main.infoDictionary?["CFBundleIdentifier"] as? String) ?? "com.overnight.blueeyed"
     }
     
-    static func synced(_ lock: Any, closure: Closures.Default<Any>) -> Any {
+    public static func synced(_ lock: Any, closure: Closures.Default<Any>) -> Any {
         objc_sync_enter(lock)
         let ret = closure()
         objc_sync_exit(lock)
         return ret
     }
     
-    func cdid() -> String {
+    open func cdid() -> String {
         return (AppConfig.synced(self) { () -> Any in
             let defaults = UserDefaults.standard
             guard let deviceId = defaults.string(forKey: "kSignInDeviceId") else {
@@ -63,25 +63,25 @@ class AppConfig: NSObject {
         } as? String) ?? self.udid()
     }
     
-    func uid() -> String {
+    open func uid() -> String {
         return UserDefaults.standard.string(forKey: "kSignInUid") ?? ""
     }
     
-    func set(uid: String) {
+    open func set(uid: String) {
         UserDefaults.standard.set(uid, forKey: "kSignInUid")
     }
 }
 
-class SysConfig: NSObject {
-    func name() -> String {
+open class SysConfig: NSObject {
+    open func name() -> String {
         return UIDevice.current.systemName
     }
     
-    func version() -> String {
+    open func version() -> String {
         return UIDevice.current.systemVersion
     }
     
-    func model() -> String {
+    open func model() -> String {
         return UIDevice.current.model
     }
 }

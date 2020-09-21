@@ -8,10 +8,10 @@
 
 import UIKit
 
-class CHTableController: CHViewController {
+open class CHTableController: CHViewController {
     @IBOutlet var tableView: UITableView?
     
-    override func viewDidLoad() {
+    override open func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.

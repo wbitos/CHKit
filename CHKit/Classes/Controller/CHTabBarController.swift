@@ -9,9 +9,9 @@
 import UIKit
 import RAMAnimatedTabBarController
 
-class CHTabBarController: RAMAnimatedTabBarController {
+open class CHTabBarController: RAMAnimatedTabBarController {
 
-    override func viewDidLoad() {
+    override open func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.

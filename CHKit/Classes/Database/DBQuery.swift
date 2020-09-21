@@ -10,43 +10,43 @@ import UIKit
 import FMDB
 import ObjectMapper
 
-class DBQuery: NSObject {
-    var subquries: [DBQuery] = []
-    var conditions: [DBCondition] = []
-    var table: String = ""
-    var connection: FMDatabaseQueue? = nil
-    var limit: DBLimit? = nil
-    var orderby: [DBOrderby] = []
+open class DBQuery: NSObject {
+    open var subquries: [DBQuery] = []
+    open var conditions: [DBCondition] = []
+    open var table: String = ""
+    open var connection: FMDatabaseQueue? = nil
+    open var limit: DBLimit? = nil
+    open var orderby: [DBOrderby] = []
     
-    func whereIn(key: String, values: [Queryble]) -> Self {
+    open func whereIn(key: String, values: [Queryble]) -> Self {
         return self
     }
     
-    func whereBetween(key: String, from: Queryble, end: Queryble) -> Self {
+    open func whereBetween(key: String, from: Queryble, end: Queryble) -> Self {
         return self
     }
     
-    func whereEqual(key: String, value: Queryble) -> Self {
+    open func whereEqual(key: String, value: Queryble) -> Self {
         return self
     }
     
-    func whereGreater(key: String, value: Queryble) -> Self {
+    open func whereGreater(key: String, value: Queryble) -> Self {
         return self
     }
     
-    func whereLesser(key: String, value: Queryble) -> Self {
+    open func whereLesser(key: String, value: Queryble) -> Self {
         return self
     }
     
-    func `where`(_ query: ((DBQuery) -> Void)) -> Self {
+    open func `where`(_ query: ((DBQuery) -> Void)) -> Self {
         return self
     }
     
-    func `where`(_ key: String, value: Queryble) -> Self {
+    open func `where`(_ key: String, value: Queryble) -> Self {
         return self.where(key, conditionkey: .equal, value: value)
     }
     
-    func `where`(_ key: String, conditionkey: DBCondition.Keys, value: Queryble) -> Self {
+    open func `where`(_ key: String, conditionkey: DBCondition.Keys, value: Queryble) -> Self {
         let condition = DBCondition()
         condition.key = key
         condition.condition = conditionkey
@@ -56,7 +56,7 @@ class DBQuery: NSObject {
         return self
     }
     
-    func orWhere(_ key: String, conditionkey: DBCondition.Keys, value: Queryble) -> Self {
+    open func orWhere(_ key: String, conditionkey: DBCondition.Keys, value: Queryble) -> Self {
         let condition = DBCondition()
         condition.or = true
         condition.key = key
@@ -67,7 +67,7 @@ class DBQuery: NSObject {
         return self
     }
     
-    func orderby(_ key: String, sequence: DBOrderby.Sequence) -> Self {
+    open func orderby(_ key: String, sequence: DBOrderby.Sequence) -> Self {
         let orderby = DBOrderby()
         orderby.by = key
         orderby.sequence = sequence
@@ -75,26 +75,26 @@ class DBQuery: NSObject {
         return self
     }
     
-    func skip(_ offset: Int64) -> Self {
+    open func skip(_ offset: Int64) -> Self {
         let limit = self.limit ?? DBLimit()
         limit.offset = offset
         self.limit = limit
         return self
     }
     
-    func take(_ count: Int64) -> Self {
+    open func take(_ count: Int64) -> Self {
         let limit = self.limit ?? DBLimit()
         limit.count = count
         self.limit = limit
         return self
     }
     
-    func table(_ name: String) -> Self {
+    open func table(_ name: String) -> Self {
         self.table = table
         return self
     }
     
-    func build() -> (String, [AnyHashable: Any]) {
+    open func build() -> (String, [AnyHashable: Any]) {
         var `where` = ""
         if self.conditions.count > 0 {
             let conditions = self.conditions.map { (condition) -> String in
@@ -144,7 +144,7 @@ class DBQuery: NSObject {
         return (sql, parameters)
     }
     
-    func get<T: Mappable>() -> [T] {
+    open func get<T: Mappable>() -> [T] {
         var models: [T] = []
         let (sql, parameters) = self.build()
         NSLog("excute \(sql) with parameters: \(parameters)")
@@ -163,11 +163,11 @@ class DBQuery: NSObject {
         return models
     }
     
-    func get<T: Mappable>(columbs: [String]) -> [T] {
+    open func get<T: Mappable>(columbs: [String]) -> [T] {
         return []
     }
     
-    func first<T: Mappable>() -> T? {
+    open func first<T: Mappable>() -> T? {
         var model: T? = nil
         let (sql, parameters) = self.build()
         NSLog("excute \(sql) with parameters: \(parameters)")

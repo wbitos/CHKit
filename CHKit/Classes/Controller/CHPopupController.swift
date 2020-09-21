@@ -8,8 +8,8 @@
 
 import UIKit
 
-class CHPopupController<T: UIView>: CHViewController {
-    enum Position {
+open class CHPopupController<T: UIView>: CHViewController {
+    public enum Position {
         case top
         case bottom
         case center
@@ -17,12 +17,12 @@ class CHPopupController<T: UIView>: CHViewController {
         case right
     }
     
-    var popupView: T? = nil
+    open var popupView: T? = nil
 
-    var complete: Closures.Action<CHPopupController<T>>? = nil
-    var cancel: Closures.Action<CHPopupController<T>>? = nil
+    open var complete: Closures.Action<CHPopupController<T>>? = nil
+    open var cancel: Closures.Action<CHPopupController<T>>? = nil
 
-    var window: UIWindow? = { () -> UIWindow in
+    open var window: UIWindow? = { () -> UIWindow in
         let win = UIWindow(frame: UIScreen.main.bounds)
         win.windowLevel = UIWindow.Level.alert
         win.backgroundColor = UIColor.clear
@@ -30,17 +30,17 @@ class CHPopupController<T: UIView>: CHViewController {
         return win
     }()
     
-    var topCoverView: UIControl? = UIControl()
-    var coverView = UIButton(type: .custom)
+    open var topCoverView: UIControl? = UIControl()
+    open var coverView = UIButton(type: .custom)
 
-    var position: Position = .bottom
-    var offset: CGFloat = 0.0
+    open var position: Position = .bottom
+    open var offset: CGFloat = 0.0
     
-    public func preparePopupView() {
+    open func preparePopupView() {
         
     }
     
-    override func viewDidLoad() {
+    open override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
@@ -162,13 +162,13 @@ class CHPopupController<T: UIView>: CHViewController {
     }
     */
 
-    func show(animated: Bool, complete: Closures.Action<CHPopupController<T>>?) {
+    open func show(animated: Bool, complete: Closures.Action<CHPopupController<T>>?) {
         self.window?.rootViewController = self
         self.window?.makeKeyAndVisible()
         self.complete = complete
     }
     
-    func hide(animated: Bool) {
+    open func hide(animated: Bool) {
         guard let popupView = self.popupView else {
             self.window?.resignKey()
             self.view.alpha = 1.0

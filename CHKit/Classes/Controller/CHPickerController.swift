@@ -8,14 +8,14 @@
 
 import UIKit
 
-class CHPickerController<T: UIView>: CHViewController {
-    var picker: T? = nil
+open class CHPickerController<T: UIView>: CHViewController {
+    open var picker: T? = nil
     
-    var complete:Closures.Action<Bool>?
+    open var complete:Closures.Action<Bool>?
     
     var coverView = UIButton(type: .custom)
     
-    lazy var window: UIWindow? = { () -> UIWindow in
+    lazy open var window: UIWindow? = { () -> UIWindow in
         let win = UIWindow(frame: UIScreen.main.bounds)
         win.windowLevel = .alert
         win.backgroundColor = UIColor.clear
@@ -23,7 +23,7 @@ class CHPickerController<T: UIView>: CHViewController {
         return win
     }()
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
@@ -77,11 +77,6 @@ class CHPickerController<T: UIView>: CHViewController {
         }
     }
     
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-    
     /*
     // MARK: - Navigation
 
@@ -92,14 +87,14 @@ class CHPickerController<T: UIView>: CHViewController {
     }
     */
 
-    func show(animated: Bool, complete:Closures.Action<Bool>?) {
+    open func show(animated: Bool, complete:Closures.Action<Bool>?) {
         self.window?.rootViewController = self
         self.window?.makeKeyAndVisible()
         self.complete = complete
         
     }
     
-    func hide(animated: Bool) {
+    open func hide(animated: Bool) {
         self.window?.resignKey()
 
         self.view.alpha = 1.0

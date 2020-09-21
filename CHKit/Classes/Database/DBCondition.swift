@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol Queryble {
+public protocol Queryble {
     
 }
 
@@ -34,18 +34,18 @@ extension Bool: Queryble {
 
 
 
-class DBCondition: NSObject {
-    enum Keys: String {
-    case equal = "="
-    case greater = ">"
-    case lesser = "<"
-    case between = "betwwen"
-    case `in` = "in"
+open class DBCondition: NSObject {
+    public enum Keys: String {
+        case equal = "="
+        case greater = ">"
+        case lesser = "<"
+        case between = "betwwen"
+        case `in` = "in"
     }
     
-    var first: Bool = false
-    var or: Bool = false
-    var key: String = ""
-    var condition: DBCondition.Keys = .equal
-    var value: Queryble? = nil
+    open var first: Bool = false
+    open var or: Bool = false
+    open var key: String = ""
+    open var condition: DBCondition.Keys = .equal
+    open var value: Queryble? = nil
 }

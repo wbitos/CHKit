@@ -8,8 +8,8 @@
 
 import UIKit
 
-class PhysicalOnePixelSeperatorHorizontal: UIView {
-    override func awakeFromNib() {
+open class PhysicalOnePixelSeperatorHorizontal: UIView {
+    open override func awakeFromNib() {
         super.awakeFromNib()
         self.widthConstrait?.constant = 1.0 / UIScreen.main.scale
     }

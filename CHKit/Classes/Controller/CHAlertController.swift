@@ -8,11 +8,11 @@
 
 import UIKit
 
-class CHAlertController: UIViewController {
-    @IBOutlet var alertView: UIView?
-    var complete: Closures.Action<CHAlertController>? = nil
+open class CHAlertController: UIViewController {
+    @IBOutlet open var alertView: UIView?
+    open var complete: Closures.Action<CHAlertController>? = nil
 
-    var window: UIWindow? = { () -> UIWindow in
+    open var window: UIWindow? = { () -> UIWindow in
         let win = UIWindow(frame: UIScreen.main.bounds)
         win.windowLevel = UIWindow.Level.alert
         win.backgroundColor = UIColor.clear
@@ -20,7 +20,7 @@ class CHAlertController: UIViewController {
         return win
     }()
     
-    override func viewDidLoad() {
+    open override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
@@ -45,13 +45,13 @@ class CHAlertController: UIViewController {
     }
     */
 
-    func show(animated: Bool, complete:Closures.Action<CHAlertController>? = nil) {
+    open func show(animated: Bool, complete:Closures.Action<CHAlertController>? = nil) {
         self.window?.rootViewController = self
         self.window?.makeKeyAndVisible()
         self.complete = complete
     }
     
-    func hide(animated: Bool) {
+    open func hide(animated: Bool) {
         self.alertView?.alpha = 1.0
         UIView.animate(withDuration: 0.5, delay: 0.0, options: [.curveEaseInOut], animations: {
             self.alertView?.alpha = 0.0
@@ -65,7 +65,7 @@ class CHAlertController: UIViewController {
         }
     }
     
-    @IBAction func cancel(_ sender: Any) {
+    @IBAction open func cancel(_ sender: Any) {
         self.hide(animated: true)
     }
 }

@@ -9,11 +9,11 @@
 import UIKit
 import SnapKit
 
-class XibRefrenceView: UIView {
-    @IBInspectable var refrencenibname: String = ""
-    var refrence: UIView? = nil
+open class XibRefrenceView: UIView {
+    @IBInspectable open var refrencenibname: String = ""
+    open var refrence: UIView? = nil
     
-    override func awakeFromNib() {
+    open override func awakeFromNib() {
         super.awakeFromNib()
         
         if let refrence = Bundle(for: XibRefrenceView.self).loadNibNamed(self.refrencenibname, owner: nil, options: nil)?.first as? UIView {

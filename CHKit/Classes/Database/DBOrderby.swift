@@ -8,12 +8,12 @@
 
 import UIKit
 
-class DBOrderby: NSObject {
-    enum Sequence: String {
+open class DBOrderby: NSObject {
+    public enum Sequence: String {
         case asc = "asc"
         case desc = "desc"
     }
     
-    var by: String = ""
-    var sequence: DBOrderby.Sequence = DBOrderby.Sequence.asc
+    open var by: String = ""
+    open var sequence: DBOrderby.Sequence = DBOrderby.Sequence.asc
 }

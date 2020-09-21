@@ -8,7 +8,7 @@
 
 import UIKit
 
-extension UIView {
+public extension UIView {
     private struct LayoutViewAssociatedKeys {
         static var heightConstraitKey = "UIView.Layout.HeightConstrait"
         static var widthConstraitKey = "UIView.Layout.WidthConstrait"

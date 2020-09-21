@@ -8,7 +8,7 @@
 
 import UIKit
 
-class Closures: NSObject {
+open class Closures: NSObject {
     public typealias Action<T> = (T) -> Void
     public typealias Default<R> = () -> R
     public typealias Status = (Bool) -> Void

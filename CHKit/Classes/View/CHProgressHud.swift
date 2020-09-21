@@ -9,22 +9,22 @@
 import UIKit
 import JGProgressHUD
 
-class CHProgressHud: JGProgressHUD {
-    init(toast: String) {
+open class CHProgressHud: JGProgressHUD {
+    public init(toast: String) {
         super.init(style: .dark)
         self.textLabel.text = toast
     }
     
-    override init(style: JGProgressHUDStyle) {
+    override public init(style: JGProgressHUDStyle) {
         super.init(style: style)
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     
     @discardableResult
-    static func show(toast: String, inView view: UIView? = nil) -> CHProgressHud? {
+    static public func show(toast: String, inView view: UIView? = nil) -> CHProgressHud? {
         guard let parentView: UIView = view ?? (UIApplication.shared.delegate?.window as? UIView) else {
             return nil
         }

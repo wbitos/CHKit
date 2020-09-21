@@ -8,7 +8,7 @@
 
 import UIKit
 
-enum WeekDay: Int {
+public enum WeekDay: Int {
     case sunday = 0
     case monday = 1
     case tuesday = 2

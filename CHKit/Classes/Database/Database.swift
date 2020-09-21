@@ -9,20 +9,20 @@
 import UIKit
 import FMDB
 
-class Database: NSObject {
+open class Database: NSObject {
     
-    init(name: String) {
+    public init(name: String) {
         super.init()
         self.name = name
         _ = self.connect()
     }
     
-    var table:String? = nil
-    var name:String = "default.sqlite3"
-    var connection: FMDatabaseQueue? = nil
-    var query: DBQuery = DBQuery()
+    open var table:String? = nil
+    open var name:String = "default.sqlite3"
+    open var connection: FMDatabaseQueue? = nil
+    open var query: DBQuery = DBQuery()
     
-    func connect() -> Self {
+    open func connect() -> Self {
         if let dbPath = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.chihuahua.fanli")?.appendingPathComponent(self.name).path {
             self.connection = FMDatabaseQueue(path: dbPath)
 //            if FileManager.default.fileExists(atPath: dbPath) {
@@ -31,40 +31,40 @@ class Database: NSObject {
         return self
     }
     
-    func table(_ name: String) -> Self {
+    open func table(_ name: String) -> Self {
         self.table = name
         return self
     }
     
-    func whereIn(key: String, values: [Any]) -> Self {
+    open func whereIn(key: String, values: [Any]) -> Self {
         return self
     }
     
-    func whereEqual(key: String, value: Any) -> Self {
+    open func whereEqual(key: String, value: Any) -> Self {
         return self
     }
     
-    func whereGreater(key: String, value: Any) -> Self {
+    open func whereGreater(key: String, value: Any) -> Self {
         return self
     }
     
-    func whereLesser(key: String, value: Any) -> Self {
+    open func whereLesser(key: String, value: Any) -> Self {
         return self
     }
     
-    func whereQuery(query: ((DBQuery) -> Void)) -> Self {
+    open func whereQuery(query: ((DBQuery) -> Void)) -> Self {
         return self
     }
     
-    func get<T>() -> [T] {
+    open func get<T>() -> [T] {
         return []
     }
     
-    func get<T>(columbs: [String]) -> [T] {
+    open func get<T>(columbs: [String]) -> [T] {
         return []
     }
     
-    func first<T>() -> T? {
+    open func first<T>() -> T? {
         return nil
     }
     

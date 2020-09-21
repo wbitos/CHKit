@@ -7,11 +7,11 @@
 
 import UIKit
 
-protocol NibView {
+public protocol NibView {
     
 }
 
-extension UIView {
+public extension UIView {
     class func awake<T>(nibName: String) -> T? {
         let nib = UINib(nibName: nibName, bundle: nil)
         let view = nib.instantiate(withOwner: nil, options: nil).first
@@ -32,7 +32,7 @@ extension UIView {
     }
 }
 
-extension NibView where Self : UIView {
+public extension NibView where Self : UIView {
     static func load(name: String) -> Self? {
         return Bundle(for: Self.self).loadNibNamed(name, owner: nil, options: nil)?.first as? Self
     }

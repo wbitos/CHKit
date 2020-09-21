@@ -9,7 +9,7 @@
 import UIKit
 import MJRefresh
 
-extension UIScrollView {
+public extension UIScrollView {
     func setRefresh(action: Closures.Default<Void>?) {
         let mj_header = MJRefreshNormalHeader {
             action?()

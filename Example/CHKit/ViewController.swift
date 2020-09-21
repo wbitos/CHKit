@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CHKit
 
 class ViewController: UIViewController {
 

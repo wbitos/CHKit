@@ -8,24 +8,24 @@
 
 import UIKit
 
-class DeviceConfig: NSObject {
+open class DeviceConfig: NSObject {
     static var Appkey = "83f5a1d7-7678-4dcf-8cb5-433cfccf6e27"
     static var Secret = "wGl2rvlP6vQE5n3G48KfDoUtjHvw9tUWL3LfSbiNTq1MpXh1"
     
-    static func document() -> String {
+    public static func document() -> String {
         return NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true).first ?? NSHomeDirectory() + "/Documents"
     }
     
-    static func cache() -> String {
+    public static func cache() -> String {
         return NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.cachesDirectory, FileManager.SearchPathDomainMask.userDomainMask, true).first ?? NSHomeDirectory() + "/Library/Caches"
     }
     
-    static func cache(domain: String) -> String {
+    public static func cache(domain: String) -> String {
         let url = URL(fileURLWithPath: self.cache()).appendingPathComponent(domain)
         return url.path
     }
     
-    static func cachePath(forKey key: String, domain: String = "com.overnight.blueeyed") -> URL {
+    public static func cachePath(forKey key: String, domain: String = "com.yilian.chkit") -> URL {
         let cacheDir = URL(fileURLWithPath: DeviceConfig.cache(domain: domain))
         let filemanager = FileManager.default
         if !filemanager.fileExists(atPath: cacheDir.path) {
@@ -39,11 +39,11 @@ class DeviceConfig: NSObject {
         return cachePath
     }
     
-    static func document(with component: String) -> String {
+    public static func document(with component: String) -> String {
         return self.documentUrl().appendingPathComponent(component).path
     }
     
-    static func documentUrl() -> URL {
+    public static func documentUrl() -> URL {
         return URL(fileURLWithPath: self.document())
     }    
 }

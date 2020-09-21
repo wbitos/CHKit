@@ -10,7 +10,7 @@ import UIKit
 import ReactiveSwift
 import ReactiveCocoa
 
-public class CHViewController: UIViewController {
+open class CHViewController: UIViewController {
     lazy var backButton: UIButton = {
         let back = UIButton(type: .custom)
         back.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
@@ -25,7 +25,7 @@ public class CHViewController: UIViewController {
         return back
     }()
     
-    lazy var closeButton: UIButton = {
+    lazy open var closeButton: UIButton = {
         let closeButton = UIButton(type: .custom)
         closeButton.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
         closeButton.setImage(UIImage(named: "webview-close"), for: .normal)
@@ -39,7 +39,7 @@ public class CHViewController: UIViewController {
         return closeButton
     }()
     
-    lazy var rightButton: UIButton = {
+    lazy open var rightButton: UIButton = {
         let rightButton = UIButton(type: .custom)
         rightButton.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
         rightButton.contentHorizontalAlignment = .right
@@ -48,21 +48,21 @@ public class CHViewController: UIViewController {
         return rightButton
     }()
     
-    var network: Bool {
+    open var network: Bool {
         return false
     }
     
-    var enableDevToast: Bool {
+    open var enableDevToast: Bool {
         return true
     }
     
-    var viewDidLoadEvent: Closures.Action<CHViewController>? = nil
-    var viewWillAppearEvent: Closures.Action<CHViewController>? = nil
-    var viewDidAppearEvent: Closures.Action<CHViewController>? = nil
-    var viewWillDisappearEvent: Closures.Action<CHViewController>? = nil
-    var viewDidDisappearEvent: Closures.Action<CHViewController>? = nil
+    open var viewDidLoadEvent: Closures.Action<CHViewController>? = nil
+    open var viewWillAppearEvent: Closures.Action<CHViewController>? = nil
+    open var viewDidAppearEvent: Closures.Action<CHViewController>? = nil
+    open var viewWillDisappearEvent: Closures.Action<CHViewController>? = nil
+    open var viewDidDisappearEvent: Closures.Action<CHViewController>? = nil
 
-    override public func viewDidLoad() {
+    override open func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
@@ -82,24 +82,24 @@ public class CHViewController: UIViewController {
         self.viewDidLoadEvent?(self)
     }
     
-    override public func viewWillAppear(_ animated: Bool) {
+    override open func viewWillAppear(_ animated: Bool) {
         self.viewWillAppearEvent?(self)
         super.viewWillAppear(animated)
         weak var weakSelf = self
         self.navigationController?.interactivePopGestureRecognizer?.delegate = weakSelf
     }
     
-    override public func viewDidAppear(_ animated: Bool) {
+    override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.viewDidAppearEvent?(self)
     }
     
-    override public func viewWillDisappear(_ animated: Bool) {
+    override open func viewWillDisappear(_ animated: Bool) {
         self.viewWillDisappearEvent?(self)
         super.viewWillDisappear(animated)
     }
     
-    override public func viewDidDisappear(_ animated: Bool) {
+    override open func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         self.viewDidDisappearEvent?(self)
     }
@@ -113,11 +113,11 @@ public class CHViewController: UIViewController {
     }
     */
 
-    func reload(complete: Closures.Action<Bool>? = nil) {
+    open func reload(complete: Closures.Action<Bool>? = nil) {
         
     }
     
-    @IBAction @objc dynamic func back(_ sender: Any?) {
+    @IBAction @objc dynamic open func back(_ sender: Any?) {
         self.navigationController?.popViewController(animated: true)
     }
     

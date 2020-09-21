@@ -8,16 +8,16 @@
 
 import UIKit
 
-class CHCollectionController: CHViewController {
-    @IBOutlet var collectionView: UICollectionView?
+open class CHCollectionController: CHViewController {
+    @IBOutlet open var collectionView: UICollectionView?
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
     }
 
-    override func didReceiveMemoryWarning() {
+    open override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }

@@ -8,10 +8,10 @@
 
 import UIKit
 
-class CHScrollController: CHViewController {
-    @IBOutlet weak var scrollView: UIScrollView?
+open class CHScrollController: CHViewController {
+    @IBOutlet open weak var scrollView: UIScrollView?
     
-    override func viewDidLoad() {
+    override open func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.

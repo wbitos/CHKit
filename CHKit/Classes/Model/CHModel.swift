@@ -10,7 +10,7 @@ import UIKit
 import ObjectMapper
 import FMDB
 
-enum PropertyTypes: String {
+public enum PropertyTypes: String {
     case Int8 = "c"
     case Int16 = "s"
     case Int32 = "i"
@@ -24,32 +24,32 @@ enum PropertyTypes: String {
     case Decimal = "{"
 }
 
-typealias PropertyType = String
+public typealias PropertyType = String
 
-typealias CHModelClass = CHModel.Type
+public typealias CHModelClass = CHModel.Type
 
-protocol CHModelProtocol {
+public protocol CHModelProtocol {
     
 }
 
-protocol CHModelDatabaseProtocol {
+public protocol CHModelDatabaseProtocol {
     
 }
 
 @objcMembers
-class CHModel: BaseModel, Mappable, CHModelProtocol {
-    var id: Int64 = 0
-    var created: Date = Date()
-    var modified: Date = Date()
+open class CHModel: NSObject, Mappable, CHModelProtocol {
+    open var id: Int64 = 0
+    open var created: Date = Date()
+    open var modified: Date = Date()
     
     private var db: String = "default.sqlite3"
     private var connection: FMDatabaseQueue? = nil
     
-    override init() {
+    override public init() {
         super.init()
     }
     
-    required init?(map: Map) {
+    required public init?(map: Map) {
         id = (try? map.value("id")) ?? 0
         created = (try? map.value("created")) ?? Date()
         modified = (try? map.value("modified")) ?? Date()
@@ -68,17 +68,17 @@ class CHModel: BaseModel, Mappable, CHModelProtocol {
         }
     }
     
-    func mapping(map: Map) {
+    open func mapping(map: Map) {
         id <- map["id"]
         created <- (map["created"], CustomDateFormatTransform(formatString: "yyyy-MM-dd HH:mm:ss"))
         modified <- (map["modified"], CustomDateFormatTransform(formatString: "yyyy-MM-dd HH:mm:ss"))
     }
     
-    func database() -> String {
+    open func database() -> String {
         return self.db
     }
     
-    func insert() -> Bool {
+    open func insert() -> Bool {
         let map = self.toJSON()
         
         let filtered = map.keys.filter { (name) -> Bool in
@@ -103,7 +103,7 @@ class CHModel: BaseModel, Mappable, CHModelProtocol {
         return isSuccess
     }
     
-    func replace() -> Bool {
+    open func replace() -> Bool {
         let map = self.toJSON()
         
         let names = map.keys.map { (name) -> String in
@@ -122,7 +122,7 @@ class CHModel: BaseModel, Mappable, CHModelProtocol {
         return isSuccess
     }
     
-    func update() -> Bool {
+    open func update() -> Bool {
         let map = self.toJSON()
         
         let flags = map.keys.filter { (name) -> Bool in
@@ -142,12 +142,12 @@ class CHModel: BaseModel, Mappable, CHModelProtocol {
     }
     
     @discardableResult
-    func save() -> Bool {
+    open func save() -> Bool {
         return self.id == 0 ? self.insert() : self.replace()
     }
     
     @discardableResult
-    class func empty() -> Bool {
+    open class func empty() -> Bool {
         let sql = "delete from \(self.table())"
         NSLog("excute: \(sql)")
         var isSuccess = false
@@ -157,53 +157,53 @@ class CHModel: BaseModel, Mappable, CHModelProtocol {
         return isSuccess
     }
     
-    class func `where`(_ key: String, value: Queryble) -> DBQuery {
+    open class func `where`(_ key: String, value: Queryble) -> DBQuery {
         return self.where(key, conditionkey: .equal, value: value)
     }
     
-    class func `where`(_ key: String, conditionkey: DBCondition.Keys, value: Queryble) -> DBQuery {
+    open class func `where`(_ key: String, conditionkey: DBCondition.Keys, value: Queryble) -> DBQuery {
         let query = DBQuery()
         query.table = self.table()
         query.connection = self.connect()
         return query.where(key, conditionkey: conditionkey, value: value)
     }
     
-    class func skip(_ offset: Int64) -> DBQuery {
+    open class func skip(_ offset: Int64) -> DBQuery {
         let query = DBQuery()
         query.table = self.table()
         query.connection = self.connect()
         return query.skip(offset)
     }
     
-    class func take(_ count: Int64) -> DBQuery {
+    open class func take(_ count: Int64) -> DBQuery {
         let query = DBQuery()
         query.table = self.table()
         query.connection = self.connect()
         return query.take(count)
     }
     
-    class func all<T: Mappable>() -> [T] {
+    open class func all<T: Mappable>() -> [T] {
         let query = DBQuery()
         query.table = self.table()
         query.connection = self.connect()
         return query.get()
     }
     
-    class func latest<T: Mappable>(_ count: Int64) -> [T] {
+    open class func latest<T: Mappable>(_ count: Int64) -> [T] {
         let query = DBQuery()
         query.table = self.table()
         query.connection = self.connect()
         return query.orderby("updated_at", sequence: .desc).take(count).get()
     }
     
-    class func latest<T: Mappable>() -> T? {
+    open class func latest<T: Mappable>() -> T? {
         let query = DBQuery()
         query.table = self.table()
         query.connection = self.connect()
         return query.orderby("updated_at", sequence: .desc).take(1).get().first
     }
     
-    func insert(db: FMDatabase) -> Bool {
+    open func insert(db: FMDatabase) -> Bool {
         let map = self.toJSON()
         
         let filtered = map.keys.filter { (name) -> Bool in
@@ -224,7 +224,7 @@ class CHModel: BaseModel, Mappable, CHModelProtocol {
         return isSuccess
     }
     
-    func replace(db: FMDatabase) -> Bool {
+    open func replace(db: FMDatabase) -> Bool {
         let map = self.toJSON()
         
         let names = map.keys.map { (name) -> String in
@@ -240,7 +240,7 @@ class CHModel: BaseModel, Mappable, CHModelProtocol {
         return isSuccess
     }
     
-    func update(db: FMDatabase) -> Bool {
+    open func update(db: FMDatabase) -> Bool {
         let map = self.toJSON()
         
         let flags = map.keys.filter { (name) -> Bool in
@@ -256,45 +256,45 @@ class CHModel: BaseModel, Mappable, CHModelProtocol {
         return isSuccess
     }
     
-    func save(db: FMDatabase) -> Bool {
+    open func save(db: FMDatabase) -> Bool {
         return self.id == 0 ? self.insert(db: db) : self.replace(db: db)
     }
     
-    func inDatabase(_ block: ((FMDatabase) -> Void)) {
+    open func inDatabase(_ block: ((FMDatabase) -> Void)) {
         self.connect()?.inDatabase(block)
     }
     
-    func inTransaction(_ block: ((FMDatabase, UnsafeMutablePointer<ObjCBool>) -> Void)) {
+    open func inTransaction(_ block: ((FMDatabase, UnsafeMutablePointer<ObjCBool>) -> Void)) {
         self.connect()?.inTransaction(block)
     }
     
-    class func inDatabase(_ block: ((FMDatabase) -> Void)) {
+    open class func inDatabase(_ block: ((FMDatabase) -> Void)) {
         let aType: CHModel.Type = self
         let model = aType.init(JSON: [:])
         model?.connect()?.inDatabase(block)
     }
     
-    class func inTransaction(_ block: ((FMDatabase, UnsafeMutablePointer<ObjCBool>) -> Void)) {
+    open class func inTransaction(_ block: ((FMDatabase, UnsafeMutablePointer<ObjCBool>) -> Void)) {
         let aType: CHModel.Type = self
         let model = aType.init(JSON: [:])
         model?.connect()?.inTransaction(block)
     }
     
-    func table() -> String {
+    open func table() -> String {
         return String(describing: self.classForCoder)
     }
     
-    class func table() -> String {
+    open class func table() -> String {
         return String(describing: self.classForCoder())
     }
     
-    class func connect() -> FMDatabaseQueue? {
+    open class func connect() -> FMDatabaseQueue? {
         let aType: CHModel.Type = self
         let model = aType.init(JSON: [:])
         return model?.connect()
     }
     
-    func connect() -> FMDatabaseQueue? {
+    open func connect() -> FMDatabaseQueue? {
         if let connection = self.connection {
             return connection
         }
@@ -321,19 +321,19 @@ class CHModel: BaseModel, Mappable, CHModelProtocol {
         return connection
     }
     
-    func columbs() -> [String] {
+    open func columbs() -> [String] {
         return self.properties(true)
     }
     
-    class func columbs() -> [String] {
+    open class func columbs() -> [String] {
         return self.properties(true)
     }
     
-    func properties(_ deep: Bool) -> [PropertyType] {
+    open func properties(_ deep: Bool) -> [PropertyType] {
         return CHModel.properties(forClass: self.classForCoder, deep: deep)
     }
     
-    class func properties(forClass aClass: AnyClass, deep: Bool) -> [PropertyType] {
+    open class func properties(forClass aClass: AnyClass, deep: Bool) -> [PropertyType] {
         var properties:[String] = []
         var cls: AnyClass = aClass
         repeat {
@@ -360,11 +360,11 @@ class CHModel: BaseModel, Mappable, CHModelProtocol {
         return properties
     }
     
-    class func properties(_ deep: Bool) -> [PropertyType] {
+    open class func properties(_ deep: Bool) -> [PropertyType] {
         return CHModel.properties(forClass: self.classForCoder(), deep: deep)
     }
     
-    class func migrate() -> Bool {
+    open class func migrate() -> Bool {
         let aType: CHModel.Type = self
         let model = aType.init(JSON: [:])
         let sql = self.migration()
@@ -385,7 +385,7 @@ class CHModel: BaseModel, Mappable, CHModelProtocol {
         return true
     }
     
-    class func migration() -> String {
+    open class func migration() -> String {
         let columbs = self.columbs().filter { (name) -> Bool in
             return name != "id"
         }.map { (name) -> String in
@@ -400,7 +400,7 @@ class CHModel: BaseModel, Mappable, CHModelProtocol {
 //    }
 }
 
-extension Array where Element: CHModel {
+public extension Array where Element: CHModel {
     func save() {
         
         for model in self {

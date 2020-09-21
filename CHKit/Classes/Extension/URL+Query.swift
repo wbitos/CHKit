@@ -8,7 +8,7 @@
 
 import UIKit
 
-extension URL {
+public extension URL {
     func parameters() -> [String: String] {
         var parameters = [String: String]()
         if let components = URLComponents(string: self.absoluteString) {
