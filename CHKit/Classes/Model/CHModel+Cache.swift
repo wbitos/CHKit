@@ -32,14 +32,3 @@ public extension CHModel {
         return true
     }
 }
-
-public extension Array where Element: CHModel {
-    @discardableResult
-    func cache(key: String) -> Bool {
-        let cachePath = CHModel.cachePath(forKey: key)
-        if let jsonString = self.toJSONString() {
-            try? jsonString.write(to: cachePath, atomically: true, encoding: .utf8)
-        }
-        return true
-    }
-}

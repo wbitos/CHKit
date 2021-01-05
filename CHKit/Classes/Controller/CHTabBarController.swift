@@ -7,9 +7,8 @@
 //
 
 import UIKit
-import RAMAnimatedTabBarController
 
-open class CHTabBarController: RAMAnimatedTabBarController {
+open class CHTabBarController: UITabBarController {
 
     override open func viewDidLoad() {
         super.viewDidLoad()

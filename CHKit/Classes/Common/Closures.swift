@@ -13,8 +13,8 @@ open class Closures: NSObject {
     public typealias Default<R> = () -> R
     public typealias Status = (Bool) -> Void
     public typealias Custom<T, R> = (T) -> R
-    public typealias UserInfo<T> = (T, [AnyHashable: Any]) -> Void
+    public typealias UserInfo<T> = (T, [AnyHashable: Any]?) -> Void
     
-    public typealias ActionCallback<T, E> = (T, Closures.Action<E>) -> Void
+    public typealias ActionCallback<T, E> = (T, Closures.Action<E>?) -> Void
 
 }

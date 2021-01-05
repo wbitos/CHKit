@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
   s.name             = 'CHKit'
   s.version          = '0.1.0'
-  s.summary          = 'A short description of CHKit.'
+  s.summary          = 'CHKit is nothing'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
-TODO: Add long description of the pod here.
+This is nothing
                        DESC
 
   s.homepage         = 'https://github.com/wbitos/CHKit'
@@ -29,6 +29,7 @@ TODO: Add long description of the pod here.
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '11.0'
+  s.swift_version = '5'
 
   s.source_files = 'CHKit/Classes/**/*'
   
@@ -41,14 +42,22 @@ TODO: Add long description of the pod here.
   # s.dependency 'AFNetworking', '~> 2.3'
   s.dependency 'ObjectMapper'
   s.dependency 'SnapKit'
+  s.dependency 'JLRoutes'
   s.dependency 'ReactiveCocoa'
   s.dependency 'PromiseKit'
   s.dependency 'FMDB'
   s.dependency 'FCUUID'
-  s.dependency 'DynamicColor'
+  s.dependency 'DynamicColor', '~> 5.0.1'
   s.dependency 'MJRefresh'
   s.dependency 'JGProgressHUD'
   s.dependency 'WebViewJavascriptBridge'
   s.dependency 'NVActivityIndicatorView'
-  s.dependency 'RAMAnimatedTabBarController'
+  s.dependency 'JXPagingView/Paging'
+  s.dependency 'JXSegmentedView'
+  s.dependency 'LunarTerm'
+  s.dependency 'Alamofire'
+  s.dependency 'AlamofireObjectMapper'
+  s.dependency 'lottie-ios'
+  s.dependency 'SDWebImage'
+  s.dependency 'SDWebImage/GIF'
 end

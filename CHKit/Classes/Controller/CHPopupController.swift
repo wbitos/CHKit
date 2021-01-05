@@ -21,8 +21,23 @@ open class CHPopupController<T: UIView>: CHViewController {
 
     open var complete: Closures.Action<CHPopupController<T>>? = nil
     open var cancel: Closures.Action<CHPopupController<T>>? = nil
+    open var action: Closures.Action<CHPopupController<T>>? = nil
 
-    open var window: UIWindow? = { () -> UIWindow in
+    open var window: UIWindow? = { () -> UIWindow? in
+        if #available(iOS 13.0, *) {
+            guard let scene = UIApplication.shared.connectedScenes.filter({ (scence) -> Bool in
+                return scence.activationState == .foregroundActive
+            }).map({ (scence) -> UIWindowScene? in
+                return scence as? UIWindowScene
+            }).compactMap({$0}).first  else {
+                return nil
+            }
+            let win = UIWindow(windowScene: scene)
+            win.windowLevel = UIWindow.Level.alert
+            win.backgroundColor = UIColor.clear
+            win.isHidden = false
+            return win
+        }
         let win = UIWindow(frame: UIScreen.main.bounds)
         win.windowLevel = UIWindow.Level.alert
         win.backgroundColor = UIColor.clear
@@ -31,10 +46,22 @@ open class CHPopupController<T: UIView>: CHViewController {
     }()
     
     open var topCoverView: UIControl? = UIControl()
+    
     open var coverView = UIButton(type: .custom)
+    open var popupContainerView = UIView(frame: .zero)
 
     open var position: Position = .bottom
     open var offset: CGFloat = 0.0
+    open var popViewSize: CGSize? = nil
+    
+    public init(popupView: T? = nil) {
+        super.init()
+        self.popupView = popupView
+    }
+    
+    required public init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
     
     open func preparePopupView() {
         
@@ -93,18 +120,38 @@ open class CHPopupController<T: UIView>: CHViewController {
         self.view.layoutIfNeeded()
         self.preparePopupView()
 
+        
         if let popupView = self.popupView {
-            self.view.addSubview(popupView)
-            let size = popupView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+            let size = self.popViewSize ?? popupView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
             if self.position == .bottom {
-                popupView.snp.makeConstraints { (maker) in
-                    maker.bottom.equalToSuperview().offset(size.height)
+                self.view.addSubview(self.popupContainerView)
+                self.popupContainerView.addSubview(popupView)
+
+                popupView.snp.makeConstraints { [weak self](maker) in
+                    guard let strong = self else {
+                        return
+                    }
+//                    maker.bottom.equalToSuperview().offset(size.height)
+                    maker.top.equalToSuperview()
+                    maker.leading.equalToSuperview()
+                    maker.trailing.equalToSuperview()
+                    maker.height.equalTo(size.height)
+//                    maker.bottom.equalToSuperview()
+                    // maker.bottom.equalTo(strong.view.safeAreaLayoutGuide.snp.bottom)
+                }
+                
+                self.popupContainerView.snp.makeConstraints { [weak self](maker) in
+                    guard let strong = self else {
+                        return
+                    }
+                    maker.top.equalTo(strong.view.snp.bottom)
                     maker.leading.equalToSuperview()
                     maker.trailing.equalToSuperview()
                     maker.height.equalTo(size.height)
                 }
             }
             else if self.position == .top {
+                self.view.addSubview(popupView)
                 popupView.snp.makeConstraints { (maker) in
                     maker.top.equalToSuperview().offset(-1 * size.height)
                     maker.leading.equalToSuperview()
@@ -112,12 +159,22 @@ open class CHPopupController<T: UIView>: CHViewController {
                     maker.height.equalTo(size.height)
                 }
             }
-
+            else if self.position == .center {
+                self.view.addSubview(popupView)
+                popupView.snp.makeConstraints { (maker) in
+                    maker.height.equalTo(size.height)
+                    maker.width.equalTo(size.width)
+                    maker.center.equalToSuperview()
+                }
+            }
+            
             if let topCoverView = self.topCoverView {
                 self.view.bringSubviewToFront(topCoverView)
             }
+            self.popupView?.layoutIfNeeded()
+            self.popupContainerView.layoutIfNeeded()
             self.view.layoutIfNeeded()
-            
+
             self.popupView?.alpha = 0.0
             UIView.animate(withDuration: 0.05, delay: 0.0, options: [.curveEaseInOut], animations: {
                 self.popupView?.alpha = 0.2
@@ -127,11 +184,25 @@ open class CHPopupController<T: UIView>: CHViewController {
                     self.popupView?.alpha = 1.0
 
                     if self.position == .bottom {
-                        popupView.snp.remakeConstraints { (maker) in
+                        
+                        self.popupContainerView.snp.remakeConstraints { [weak self](maker) in
+                            guard let strong = self else {
+                                return
+                            }
                             maker.bottom.equalToSuperview()
                             maker.leading.equalToSuperview()
                             maker.trailing.equalToSuperview()
+                        }
+                        popupView.snp.remakeConstraints { [weak self](maker) in
+                            guard let strong = self else {
+                                return
+                            }
+                            maker.top.equalToSuperview()
+//                            maker.bottom.equalToSuperview()
+                            maker.leading.equalToSuperview()
+                            maker.trailing.equalToSuperview()
                             maker.height.equalTo(size.height)
+                            maker.bottom.equalTo(strong.view.safeAreaLayoutGuide.snp.bottom)
                         }
                     }
                     else if self.position == .top {
@@ -142,7 +213,8 @@ open class CHPopupController<T: UIView>: CHViewController {
                             maker.height.equalTo(size.height)
                         }
                     }
-                    
+                    self.popupView?.layoutIfNeeded()
+                    self.popupContainerView.layoutIfNeeded()
                     self.view.layoutIfNeeded()
                 }) { (f) in
                     self.complete?(self)
@@ -168,7 +240,7 @@ open class CHPopupController<T: UIView>: CHViewController {
         self.complete = complete
     }
     
-    open func hide(animated: Bool) {
+    open func hide(animated: Bool, complete: Closures.Action<Bool>? = nil) {
         guard let popupView = self.popupView else {
             self.window?.resignKey()
             self.view.alpha = 1.0
@@ -178,13 +250,14 @@ open class CHPopupController<T: UIView>: CHViewController {
                 self.window?.isHidden = true
                 self.window?.rootViewController = nil
                 self.window = nil
+                complete?(finished)
             }
             return
         }
         let size = popupView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
 
 //        self.popupView?.alpha = 1.0
-        let offset = self.offset
+//        let offset = self.offset
         self.coverView.alpha = 1.0
 
         UIView.animate(withDuration: 0.25, delay: 0.0, options: [.curveEaseInOut], animations: {
@@ -192,11 +265,26 @@ open class CHPopupController<T: UIView>: CHViewController {
             self.coverView.alpha = 0.2
 
             if self.position == .bottom {
-                self.popupView?.snp.remakeConstraints { (maker) in
-                    maker.bottom.equalToSuperview().offset(size.height)
+                self.popupView?.snp.remakeConstraints { [weak self](maker) in
+                    guard let strong = self else {
+                        return
+                    }
+//                    maker.bottom.equalToSuperview().offset(size.height)
+                    maker.top.equalToSuperview()
                     maker.leading.equalToSuperview()
                     maker.trailing.equalToSuperview()
                     maker.height.equalTo(size.height)
+                    maker.bottom.equalToSuperview()
+                    // maker.bottom.equalTo(strong.view.safeAreaLayoutGuide.snp.bottom)
+                }
+                
+                self.popupContainerView.snp.remakeConstraints { [weak self](maker) in
+                    guard let strong = self else {
+                        return
+                    }
+                    maker.top.equalTo(strong.view.snp.bottom)
+                    maker.leading.equalToSuperview()
+                    maker.trailing.equalToSuperview()
                 }
             }
             else if self.position == .top {
@@ -217,6 +305,8 @@ open class CHPopupController<T: UIView>: CHViewController {
                 self.window?.isHidden = true
                 self.window?.rootViewController = nil
                 self.window = nil
+                
+                complete?(finished)
             }
         }
     }

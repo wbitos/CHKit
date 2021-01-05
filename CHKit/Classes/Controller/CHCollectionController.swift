@@ -9,9 +9,18 @@
 import UIKit
 
 open class CHCollectionController: CHViewController {
-    @IBOutlet open var collectionView: UICollectionView?
+    open var collectionView: UICollectionView = { () -> UICollectionView in
+        let layout = UICollectionViewFlowLayout()
+        layout.estimatedItemSize = .zero
+        layout.minimumInteritemSpacing = 9
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = .clear
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.showsHorizontalScrollIndicator = false
+        return collectionView
+    }()
     
-    public override func viewDidLoad() {
+    open override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.

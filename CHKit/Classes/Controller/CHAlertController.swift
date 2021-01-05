@@ -12,7 +12,21 @@ open class CHAlertController: UIViewController {
     @IBOutlet open var alertView: UIView?
     open var complete: Closures.Action<CHAlertController>? = nil
 
-    open var window: UIWindow? = { () -> UIWindow in
+    open var window: UIWindow? = { () -> UIWindow? in
+        if #available(iOS 13.0, *) {
+            guard let scene = UIApplication.shared.connectedScenes.filter({ (scence) -> Bool in
+                return scence.activationState == .foregroundActive
+            }).map({ (scence) -> UIWindowScene? in
+                return scence as? UIWindowScene
+            }).compactMap({$0}).first  else {
+                return nil
+            }
+            let win = UIWindow(windowScene: scene)
+            win.windowLevel = UIWindow.Level.alert
+            win.backgroundColor = UIColor.clear
+            win.isHidden = false
+            return win
+        }
         let win = UIWindow(frame: UIScreen.main.bounds)
         win.windowLevel = UIWindow.Level.alert
         win.backgroundColor = UIColor.clear

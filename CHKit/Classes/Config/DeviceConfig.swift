@@ -45,5 +45,23 @@ open class DeviceConfig: NSObject {
     
     public static func documentUrl() -> URL {
         return URL(fileURLWithPath: self.document())
-    }    
+    }
+    
+    public static func cache(value: String, for key: String) {
+        let fileUrl = DeviceConfig.cachePath(forKey: key)
+        try? value.write(to: fileUrl, atomically: true, encoding: .utf8)
+    }
+    
+    public static func cacheValue(for key: String) -> String? {
+        let fileUrl = DeviceConfig.cachePath(forKey: key)
+        return try? String(contentsOf: fileUrl, encoding: .utf8)
+    }
+    
+    public static func clear(for key: String) {
+        let fileUrl = DeviceConfig.cachePath(forKey: key)
+        let fileManager = FileManager.default
+        if fileManager.fileExists(atPath: fileUrl.path) {
+            try? fileManager.removeItem(atPath: fileUrl.path)
+        }
+    }
 }

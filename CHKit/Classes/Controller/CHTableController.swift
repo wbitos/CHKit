@@ -9,7 +9,17 @@
 import UIKit
 
 open class CHTableController: CHViewController {
-    @IBOutlet var tableView: UITableView?
+    open lazy var tableView: UITableView = { () -> UITableView in
+        let tableView = UITableView(frame: .zero, style: .grouped)
+        tableView.estimatedRowHeight = 0
+        tableView.estimatedSectionHeaderHeight = 0
+        tableView.separatorStyle = .none
+        tableView.backgroundView = nil
+        tableView.backgroundColor = .clear
+        tableView.showsVerticalScrollIndicator = false
+        tableView.showsHorizontalScrollIndicator = false
+        return tableView
+    }()
     
     override open func viewDidLoad() {
         super.viewDidLoad()

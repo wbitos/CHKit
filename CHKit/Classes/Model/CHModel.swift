@@ -39,10 +39,9 @@ public protocol CHModelDatabaseProtocol {
 @objcMembers
 open class CHModel: NSObject, Mappable, CHModelProtocol {
     open var id: Int64 = 0
-    open var created: Date = Date()
-    open var modified: Date = Date()
     
-    private var db: String = "default.sqlite3"
+    private var dbpath: String? = nil
+    
     private var connection: FMDatabaseQueue? = nil
     
     override public init() {
@@ -50,9 +49,8 @@ open class CHModel: NSObject, Mappable, CHModelProtocol {
     }
     
     required public init?(map: Map) {
+        super.init()
         id = (try? map.value("id")) ?? 0
-        created = (try? map.value("created")) ?? Date()
-        modified = (try? map.value("modified")) ?? Date()
     }
     
     convenience init?(file key: String) {
@@ -68,14 +66,19 @@ open class CHModel: NSObject, Mappable, CHModelProtocol {
         }
     }
     
-    open func mapping(map: Map) {
-        id <- map["id"]
-        created <- (map["created"], CustomDateFormatTransform(formatString: "yyyy-MM-dd HH:mm:ss"))
-        modified <- (map["modified"], CustomDateFormatTransform(formatString: "yyyy-MM-dd HH:mm:ss"))
+    init(db: FMDatabaseQueue) {
+        super.init()
+        self.connection = db
+        self.dbpath = db.path
     }
     
-    open func database() -> String {
-        return self.db
+    open func mapping(map: Map) {
+        id <- map["id"]
+    }
+    
+    public func database(dbPath: String) -> Self {
+        self.dbpath = dbPath
+        return self
     }
     
     open func insert() -> Bool {
@@ -295,30 +298,22 @@ open class CHModel: NSObject, Mappable, CHModelProtocol {
     }
     
     open func connect() -> FMDatabaseQueue? {
-        if let connection = self.connection {
-            return connection
-        }
-        if let dbDir = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.chihuahua.fanli")?.appendingPathComponent("Databases").path {
-            if !FileManager.default.fileExists(atPath: dbDir) {
-                try? FileManager.default.createDirectory(atPath: dbDir, withIntermediateDirectories: true, attributes: nil)
+        return CHModel.synced(CHModel.self) { () -> Any in
+            if let connection = self.connection {
+                return connection
             }
-            
-            NSLog("db path: \(dbDir)")
-            
-            let dbPath = URL(fileURLWithPath: dbDir).appendingPathComponent(self.db).path
-            self.connection = FMDatabaseQueue(path: dbPath)
-            return self.connection
-        }
-        
-        let documentPath = URL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true).first!)
-        let dbDir = documentPath.appendingPathComponent("Databases").path
-        if !FileManager.default.fileExists(atPath: dbDir) {
-            try? FileManager.default.createDirectory(atPath: dbDir, withIntermediateDirectories: true, attributes: nil)
-        }
-        let dbPath = URL(fileURLWithPath: dbDir).appendingPathComponent(self.db).path
-        let connection = FMDatabaseQueue(path: dbPath)
-        self.connection = connection
-        return connection
+            let dbPath = self.dbpath ?? URL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true).first!).appendingPathComponent("default.sqlite3").path
+            let connection = FMDatabaseQueue(path: dbPath)
+            self.connection = connection
+            return connection as Any
+        } as? FMDatabaseQueue
+    }
+    
+    public static func synced(_ lock: Any, closure: Closures.Default<Any>) -> Any {
+        objc_sync_enter(lock)
+        let ret = closure()
+        objc_sync_exit(lock)
+        return ret
     }
     
     open func columbs() -> [String] {
@@ -425,5 +420,45 @@ public extension Array where Element: CHModel {
         else {
             return nil
         }
+    }
+    
+    @discardableResult
+    func cache(key: String) -> Bool {
+        let cachePath = CHModel.cachePath(forKey: key)
+        if let jsonString = self.toJSONString() {
+            try? jsonString.write(to: cachePath, atomically: true, encoding: .utf8)
+        }
+        return true
+    }
+}
+
+public extension Dictionary where Key: Hashable, Value: CHModel {
+    init?(file key: String) {
+        let cachePath = CHModel.cachePath(forKey: key)
+        if let data = try? Data(contentsOf: cachePath), let jsonObject = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [Key: [String: Any]] {
+            let converted = jsonObject.mapValues({ (dict) -> Value in
+                return Value(JSON: dict)!
+            })
+            self.init()
+            self.merge(converted) { (v1, v2) -> Value in
+                return v2
+            }
+        }
+        else {
+            return nil
+        }
+    }
+    
+    @discardableResult
+    func cache(key: String) -> Bool {
+        let cachePath = CHModel.cachePath(forKey: key)
+        let jsonObj = self.mapValues({ (v) -> [String: Any] in
+            return v.toJSON()
+        })
+        if let jsonData = try? JSONSerialization.data(withJSONObject: jsonObj, options: .prettyPrinted) {
+            try? jsonData.write(to: cachePath)
+            return true
+        }
+        return false
     }
 }

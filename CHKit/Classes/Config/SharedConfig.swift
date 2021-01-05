@@ -9,8 +9,12 @@
 import UIKit
 
 open class SharedConfig: NSObject {
-    @objc static let shared = SharedConfig()
+    @objc public static let shared = SharedConfig()
 
     public var app = AppConfig()
     public var sys = SysConfig()
+    
+    open func userAgent() -> String {
+        return "iOS DaoCal \(self.app.version()) (\(self.app.build()))/\(self.app.channel)/\(self.sys.model()) \(self.sys.version())/\(self.app.cdid())/\(0)"
+    }
 }

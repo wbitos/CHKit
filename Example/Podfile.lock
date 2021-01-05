@@ -1,6 +1,6 @@
 PODS:
   - CHKit (0.1.0):
-    - DynamicColor
+    - DynamicColor (~> 5.0)
     - FCUUID
     - FMDB
     - JGProgressHUD
@@ -8,22 +8,21 @@ PODS:
     - NVActivityIndicatorView
     - ObjectMapper
     - PromiseKit
-    - RAMAnimatedTabBarController
     - ReactiveCocoa
     - SnapKit
     - WebViewJavascriptBridge
-  - DynamicColor (4.2.0)
+  - DynamicColor (5.0.1)
   - FCUUID (1.3.1):
     - UICKeyChainStore (~> 2.1.0)
   - FMDB (2.7.5):
     - FMDB/standard (= 2.7.5)
   - FMDB/standard (2.7.5)
   - JGProgressHUD (2.1)
-  - MJRefresh (3.3.1)
-  - NVActivityIndicatorView (4.8.0):
-    - NVActivityIndicatorView/Presenter (= 4.8.0)
-  - NVActivityIndicatorView/Presenter (4.8.0)
-  - ObjectMapper (3.5.2)
+  - MJRefresh (3.5.0)
+  - NVActivityIndicatorView (5.0.1):
+    - NVActivityIndicatorView/Base (= 5.0.1)
+  - NVActivityIndicatorView/Base (5.0.1)
+  - ObjectMapper (4.2.0)
   - PromiseKit (6.13.1):
     - PromiseKit/CorePromise (= 6.13.1)
     - PromiseKit/Foundation (= 6.13.1)
@@ -33,10 +32,9 @@ PODS:
     - PromiseKit/CorePromise
   - PromiseKit/UIKit (6.13.1):
     - PromiseKit/CorePromise
-  - RAMAnimatedTabBarController (5.1.0)
-  - ReactiveCocoa (10.2.0):
+  - ReactiveCocoa (11.0.0):
     - ReactiveSwift (~> 6.2)
-  - ReactiveSwift (6.2.1)
+  - ReactiveSwift (6.3.0)
   - SnapKit (5.0.1)
   - UICKeyChainStore (2.1.2)
   - WebViewJavascriptBridge (6.0.3)
@@ -45,7 +43,7 @@ DEPENDENCIES:
   - CHKit (from `../`)
 
 SPEC REPOS:
-  trunk:
+  https://github.com/CocoaPods/Specs.git:
     - DynamicColor
     - FCUUID
     - FMDB
@@ -54,7 +52,6 @@ SPEC REPOS:
     - NVActivityIndicatorView
     - ObjectMapper
     - PromiseKit
-    - RAMAnimatedTabBarController
     - ReactiveCocoa
     - ReactiveSwift
     - SnapKit
@@ -66,22 +63,21 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  CHKit: f541f324bf19cf0977529113de16c821dc89eacf
-  DynamicColor: c475f66bda1cabf602f2c54ac1171c0c07148a5a
+  CHKit: 0acc6e0fe8b4237574925009b8929bca2fa144bd
+  DynamicColor: d049834ef86d8ecf150b0ca1ebe54ee733a0ec22
   FCUUID: bb054fc90cd7cd99320f9f6ff8e130fe607fba05
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   JGProgressHUD: aa403e9a5b45cae98903c4600cccdd98c0c3ec90
-  MJRefresh: eeda70fbf0ad277f3178cef1cd0c3532591d6237
-  NVActivityIndicatorView: d24b7ebcf80af5dcd994adb650e2b6c93379270f
-  ObjectMapper: b53ae947d370bf89423e86be7d4e2d2b2a8d3f40
+  MJRefresh: 6afc955813966afb08305477dd7a0d9ad5e79a16
+  NVActivityIndicatorView: 738e843cb8924e9e4fc3e559d0728031624bf860
+  ObjectMapper: 1eb41f610210777375fa806bf161dc39fb832b81
   PromiseKit: 28fda91c973cc377875d8c0ea4f973013c05b6db
-  RAMAnimatedTabBarController: b5c821298071fded801532216ad8a24394f89859
-  ReactiveCocoa: a123c42f449c552460a4ee217dd49c76a17c8204
-  ReactiveSwift: 07ddf579f4eb3ee3bd656214f0461aaf2c0fd639
+  ReactiveCocoa: 189fcea9c5af7e394dd8a4cfc1c6f77af9ff3598
+  ReactiveSwift: 7937f26ec18d555e2a99352bd0a8b2817d1f042d
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
   UICKeyChainStore: 85db518bb1d294366d15ec9b92a416c4e670518f
   WebViewJavascriptBridge: 7f5bc4d3581e672e8f32bd0f812d54bc69bb8e29
 
-PODFILE CHECKSUM: 8c974e2989100431d03a6637f6a3c0beb5836074
+PODFILE CHECKSUM: 863ac7cab2080005d96586edd194c22d59c04eae
 
 COCOAPODS: 1.8.4

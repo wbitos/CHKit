@@ -11,10 +11,22 @@ import ReactiveSwift
 import ReactiveCocoa
 
 open class CHViewController: UIViewController {
+    required public init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+    
+    public override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    }
+    
+    public init() {
+        super.init(nibName: nil, bundle: nil)
+    }
+    
     lazy var backButton: UIButton = {
         let back = UIButton(type: .custom)
         back.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
-        back.setImage(UIImage(named: "navigation-back"), for: .normal)
+        back.setImage(CHBundle.shared.image(named: "navigation_back_indicator"), for: .normal)
         back.contentHorizontalAlignment = .left
         back.reactive.controlEvents(.touchUpInside).observeValues { [weak self] (btn) in
             guard let strong = self else {
@@ -28,7 +40,7 @@ open class CHViewController: UIViewController {
     lazy open var closeButton: UIButton = {
         let closeButton = UIButton(type: .custom)
         closeButton.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
-        closeButton.setImage(UIImage(named: "webview-close"), for: .normal)
+        closeButton.setImage(CHBundle.shared.image(named: "navigator_close"), for: .normal)
         closeButton.contentHorizontalAlignment = .left
         closeButton.reactive.controlEvents(.touchUpInside).observeValues { [weak self] (btn) in
             guard let strong = self else {
@@ -66,7 +78,7 @@ open class CHViewController: UIViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-
+        self.view.backgroundColor = UIColor.dynamicColor(light: .white, dark: .white)
         if let nav = self.navigationController {
             nav.navigationBar.titleTextAttributes = [
                 NSAttributedString.Key.font: UIFont.systemFont(ofSize: 18, weight: .bold),
@@ -77,8 +89,6 @@ open class CHViewController: UIViewController {
                 self.navigationItem.leftBarButtonItems = [UIBarButtonItem(customView: self.backButton)]
             }
         }
-        
-       
         self.viewDidLoadEvent?(self)
     }
     

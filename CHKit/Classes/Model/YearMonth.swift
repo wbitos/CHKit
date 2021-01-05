@@ -13,20 +13,18 @@ open class YearMonth: NSObject {
     
     private(set) var year: Int
     private(set) var month: Int = 0
-    private(set) var weeks: Int = 0
-    
-    open var firstDayOfWeek: WeekDay = .sunday {
-        didSet {
-            self.calculateWeeks()
-        }
+    private var firstDayOfWeek: WeekDay = .sunday
+
+    open var weeks: Int {
+        return self.calculateWeeks()
     }
     
+    
     public init(year: Int, month: Int, firstWeekday: WeekDay = .sunday) {
-
         self.year = year
         self.month = month
+        self.firstDayOfWeek = firstWeekday
         super.init()
-        self.calculateWeeks()
     }
     
     static public func current() -> YearMonth {
@@ -86,22 +84,22 @@ open class YearMonth: NSObject {
     // 3 4 5 6 0 1 2
     // 2 3 4 5 6 0 1
     // 1 2 3 4 5 6 0
-    open func calculateWeeks() {
+    open func calculateWeeks() -> Int {
         let days = self.daysInMonth()
         
         let add: [Int] = [0, 1, 2, 3, 4, 5, 6].map { (i) -> Int in
             return (i - self.firstDayOfWeek.rawValue + 7) % 7
         }
         
-        let weeks = Int(ceil(Double(days + add[self.firstDay().weekday().rawValue]) / 7.0))
-        self.weeks = weeks
+        let weeks = Int(ceil(Double(days + add[self.firstDay().weekday().rawValue - 1]) / 7.0))
+        return weeks
     }
     
     open func index() -> Int {
         let add: [Int] = [0, 1, 2, 3, 4, 5, 6].map { (i) -> Int in
             return (i - self.firstDayOfWeek.rawValue + 7) % 7
         }
-        return add[self.firstDay().weekday().rawValue]
+        return add[self.firstDay().weekday().rawValue - 1]
     }
     
     open func diffMonth(another: YearMonth) -> Int {
@@ -132,7 +130,11 @@ open class YearMonth: NSObject {
     }
     
     open func weekOfMonth(forDate date: Date) -> Int {
-        let firstDay = self.firstDay().addingTimeInterval(Double(-86400 * self.index()))
-        return Int(floor(date.timeIntervalSince(firstDay) / Double(86400.0 * 7)))
+        return Int(floor(Double(self.indexOfMonth(forDate: date)) / Double(7)))
+    }
+    
+    open func indexOfMonth(forDate date: Date) -> Int {
+        let firstDay = self.firstDay().add(component: .day, value: -1 * self.index())
+        return Int(date.diffDays(to: firstDay))
     }
 }

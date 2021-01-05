@@ -18,35 +18,38 @@ open class DBQuery: NSObject {
     open var limit: DBLimit? = nil
     open var orderby: [DBOrderby] = []
     
+    @discardableResult
     open func whereIn(key: String, values: [Queryble]) -> Self {
         return self
     }
     
+    @discardableResult
     open func whereBetween(key: String, from: Queryble, end: Queryble) -> Self {
         return self
     }
     
+    @discardableResult
     open func whereEqual(key: String, value: Queryble) -> Self {
         return self
     }
     
+    @discardableResult
     open func whereGreater(key: String, value: Queryble) -> Self {
         return self
     }
     
+    @discardableResult
     open func whereLesser(key: String, value: Queryble) -> Self {
         return self
     }
     
+    @discardableResult
     open func `where`(_ query: ((DBQuery) -> Void)) -> Self {
         return self
     }
     
-    open func `where`(_ key: String, value: Queryble) -> Self {
-        return self.where(key, conditionkey: .equal, value: value)
-    }
-    
-    open func `where`(_ key: String, conditionkey: DBCondition.Keys, value: Queryble) -> Self {
+    @discardableResult
+    open func `where`(_ key: String, conditionkey: DBCondition.Keys = .equal, value: Queryble? = nil) -> Self {
         let condition = DBCondition()
         condition.key = key
         condition.condition = conditionkey
@@ -56,7 +59,8 @@ open class DBQuery: NSObject {
         return self
     }
     
-    open func orWhere(_ key: String, conditionkey: DBCondition.Keys, value: Queryble) -> Self {
+    @discardableResult
+    open func orWhere(_ key: String, conditionkey: DBCondition.Keys, value: Queryble? = nil) -> Self {
         let condition = DBCondition()
         condition.or = true
         condition.key = key
@@ -67,6 +71,7 @@ open class DBQuery: NSObject {
         return self
     }
     
+    @discardableResult
     open func orderby(_ key: String, sequence: DBOrderby.Sequence) -> Self {
         let orderby = DBOrderby()
         orderby.by = key
@@ -75,6 +80,7 @@ open class DBQuery: NSObject {
         return self
     }
     
+    @discardableResult
     open func skip(_ offset: Int64) -> Self {
         let limit = self.limit ?? DBLimit()
         limit.offset = offset
@@ -82,6 +88,7 @@ open class DBQuery: NSObject {
         return self
     }
     
+    @discardableResult
     open func take(_ count: Int64) -> Self {
         let limit = self.limit ?? DBLimit()
         limit.count = count
@@ -89,24 +96,39 @@ open class DBQuery: NSObject {
         return self
     }
     
+    @discardableResult
     open func table(_ name: String) -> Self {
-        self.table = table
+        self.table = name
+        return self
+    }
+    
+    @discardableResult
+    open func connection(_ connection: FMDatabaseQueue?) -> Self {
+        self.connection = connection
         return self
     }
     
     open func build() -> (String, [AnyHashable: Any]) {
         var `where` = ""
+        for i in 0..<self.conditions.count {
+            let c = self.conditions[i]
+            c.id = i
+        }
+        
         if self.conditions.count > 0 {
             let conditions = self.conditions.map { (condition) -> String in
                 let logic = condition.first ? "" : (condition.or ? "or" : "and")
                 
                 if condition.condition == .in {
-                    return "\(logic) `\(condition.key)` \(condition.condition.rawValue) :\(condition.key)"
+                    return "\(logic) `\(condition.key)` \(condition.condition.rawValue) :v\(condition.id)"
                 }
                 else if condition.condition == .between {
-                    return "\(logic) `\(condition.key)` \(condition.condition.rawValue) :\(condition.key)-from and :\(condition.key)-end"
+                    return "\(logic) `\(condition.key)` \(condition.condition.rawValue) :v\(condition.id)-from and :v\(condition.id)-end"
                 }
-                return "\(logic) `\(condition.key)` \(condition.condition.rawValue) :\(condition.key)"
+                else if condition.condition == .isNull || condition.condition == .isNotNull {
+                    return "\(logic) `\(condition.key)` \(condition.condition.rawValue)"
+                }
+                return "\(logic) `\(condition.key)` \(condition.condition.rawValue) :v\(condition.id)"
                 }.joined(separator: " ")
             
             `where` = "where \(conditions)"
@@ -135,9 +157,12 @@ open class DBQuery: NSObject {
             else if condition.condition == .between {
 
             }
+            else if condition.condition == .isNull || condition.condition == .isNotNull {
+
+            }
             else {
                 if let value = condition.value {
-                    parameters[condition.key] = value
+                    parameters["v\(condition.id)"] = value
                 }
             }
         }
@@ -185,4 +210,6 @@ open class DBQuery: NSObject {
         })
         return model
     }
+    
+    
 }
