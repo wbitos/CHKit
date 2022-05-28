@@ -43,8 +43,8 @@ open class TimeAxisView<T: UIView>: CalendarView {
     
     open var selectedDate: Date = Date().addingTimeInterval(-86400)
     
-    lazy var indicatorView: MonthGridView = { () -> MonthGridView in
-        let view = MonthGridView(frame: .zero)
+    lazy var indicatorView: DateGridView = { () -> DateGridView in
+        let view = DateGridView(frame: .zero)
         view.dateView.dayLabel.textColor = UIColor.dynamicColor(light: 0xffffff, dark: 0xffffff)
         view.dateView.lunarLabel.textColor = UIColor.dynamicColor(light: 0xffffff, dark: 0xffffff)
         view.dateView.dayLabel.text = "1"

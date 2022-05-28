@@ -1,5 +1,5 @@
 //
-//  MonthAxisView.swift
+//  WeekAxisView.swift
 //  Coco
 //
 //  Created by wbitos on 2019/8/29.
@@ -8,24 +8,24 @@
 
 import UIKit
 
-public protocol MonthAxisViewDelegate: NSObjectProtocol {
-    func monthAxisView(_ monthAxisView: MonthAxisView, didShow yearMonth:YearMonth)
-    func monthAxisView(_ monthAxisView: MonthAxisView, shouldSelect date: Date)
-    func monthAxisView(_ monthAxisView: MonthAxisView, willSelect date: Date)
-    func monthAxisView(_ monthAxisView: MonthAxisView, didSelect date: Date)
+public protocol WeekAxisViewDelegate: NSObjectProtocol {
+    func weekAxisView(_ weekAxisView: WeekAxisView, didShow yearWeek:YearWeek)
+    func weekAxisView(_ weekAxisView: WeekAxisView, shouldSelect date: Date)
+    func weekAxisView(_ weekAxisView: WeekAxisView, willSelect date: Date)
+    func weekAxisView(_ weekAxisView: WeekAxisView, didSelect date: Date)
 }
 
-public protocol MonthAxisViewDataSource: NSObjectProtocol {
-    func monthAxisView(_ monthAxisView: MonthAxisView, dataSourceForDate date: Date) -> CalendarViewDateDataSource
+public protocol WeekAxisViewDataSource: NSObjectProtocol {
+    func weekAxisView(_ weekAxisView: WeekAxisView, dataSourceForDate date: Date) -> CalendarViewDateDataSource
 }
 
 @IBDesignable
-open class MonthAxisView: TimeAxisView<MonthView> {
-    open weak var delegate: MonthAxisViewDelegate? = nil
-    open weak var dataSource: MonthAxisViewDataSource? = nil
+open class WeekAxisView: TimeAxisView<WeekView> {
+    open weak var delegate: WeekAxisViewDelegate? = nil
+    open weak var dataSource: WeekAxisViewDataSource? = nil
 
-    open var from: YearMonth = YearMonth(year: 1901, month: 1)
-    open var count: Int = 12 * 200
+    open var from: YearWeek = YearWeek(year: 1901, week: 1, firstWeekday: .sunday)
+    open var count: Int = YearWeek(year: 2101, week: 1, firstWeekday: .sunday).diffWeek(another: YearWeek(year: 1901, week: 1, firstWeekday: .sunday))
     
 //    open var current: YearMonth = YearMonth.current() {
 //        didSet {
@@ -45,13 +45,13 @@ open class MonthAxisView: TimeAxisView<MonthView> {
         }
         self.collectionView.delegate = self
         self.collectionView.dataSource = self
-        self.collectionView.register(MonthAxisCell.self, forCellWithReuseIdentifier: NSStringFromClass(MonthAxisCell.classForCoder()))
+        self.collectionView.register(WeekAxisCell.self, forCellWithReuseIdentifier: NSStringFromClass(WeekAxisCell.classForCoder()))
     }
     
     func calculatePage() {
         let current = Int(self.collectionView.contentOffset.x / self.bounds.size.width)
-        let yearMonth = self.from.next(month: current)
-        self.delegate?.monthAxisView(self, didShow: yearMonth)
+        let yearWeek = self.from.next(week: current)
+        self.delegate?.weekAxisView(self, didShow: yearWeek)
     }
     
     open override func select(date: Date, animated: Bool) {
@@ -63,20 +63,20 @@ open class MonthAxisView: TimeAxisView<MonthView> {
             return
         }
         self.selectedDate = date
-        let index = date.yearMonth().diffMonth(another: self.from)
+        let index = date.yearWeek(firstDayOfWeek: self.from.firstDayOfWeek).diffWeek(another: self.from)
         self.collectionView.scrollToItem(at: IndexPath(row: index, section: 0), at: .centeredHorizontally, animated: animated)
-        if let axisCell = self.collectionView.cellForItem(at: IndexPath(row: index, section: 0)) as? MonthAxisCell {
+        if let axisCell = self.collectionView.cellForItem(at: IndexPath(row: index, section: 0)) as? WeekAxisCell {
             axisCell.itemView.collectionView.reloadData()
         }
         self.didSelect(date: date)
     }
     
-    open func currentMonthView() -> MonthView? {
-        return self.currentMonthAxisCell()?.itemView
+    open func currentWeekView() -> WeekView? {
+        return self.currentWeekAxisCell()?.itemView
     }
     
-    open func currentMonthAxisCell() -> MonthAxisCell? {
-        return self.collectionView.cellForItem(at: IndexPath(item: self.currentPage(), section: 0)) as? MonthAxisCell
+    open func currentWeekAxisCell() -> WeekAxisCell? {
+        return self.collectionView.cellForItem(at: IndexPath(item: self.currentPage(), section: 0)) as? WeekAxisCell
     }
     
     open func currentPage() -> Int {
@@ -85,16 +85,16 @@ open class MonthAxisView: TimeAxisView<MonthView> {
     }
     
     open override func didSelect(date: Date, animated: Bool = true) {
-        guard let monthView = self.currentMonthView() else {
+        guard let monthView = self.currentWeekView() else {
             return
         }
-        self.delegate?.monthAxisView(self, willSelect: date)
+        self.delegate?.weekAxisView(self, willSelect: date)
         self.selectedDate = date
         self.collectionView.bringSubviewToFront(self.indicatorView)
-        let dataSourceForDate = self.dataSource?.monthAxisView(self, dataSourceForDate: date)
+        let dataSourceForDate = self.dataSource?.weekAxisView(self, dataSourceForDate: date)
         UIView.animate(withDuration: animated ? 0.25 : 0.0, delay: 0.0, options: .curveEaseInOut) {
             let frame = self.rect(for: date)
-            let page = date.yearMonth().diffMonth(another: self.from)
+            let page = date.yearWeek(firstDayOfWeek: self.from.firstDayOfWeek).diffWeek(another: self.from)
 
             let pageOffset = CGFloat(page * Int(self.bounds.size.width))
             let size: CGFloat = 50 //min(frame.size.width, frame.size.height)
@@ -111,24 +111,22 @@ open class MonthAxisView: TimeAxisView<MonthView> {
             monthView.reloadData(for: date)
             self.contentView.layoutIfNeeded()
         } completion: { (finished) in
-            self.delegate?.monthAxisView(self, didSelect: date)
+            self.delegate?.weekAxisView(self, didSelect: date)
         }
     }
     
     open func rect(for date: Date) -> CGRect {
-        let yearMonth = date.yearMonth()
-        let rows = yearMonth.weeks
+        let rows = 5
         let width = UIScreen.main.bounds.size.width / 7.0
         let height = (width * 5.6) / CGFloat(rows)
-        let index = yearMonth.indexOfMonth(forDate: date)
-        let section = Int(floor(Double(index) / 7.0))
+        let index = date.diffDays(to: date.yearWeek(firstDayOfWeek: self.from.firstDayOfWeek).firstDay())
+        let section = 0
         let row = index % 7
-        
         return CGRect(x: CGFloat(row) * width, y: CGFloat(section) * height, width: width, height: height)
     }
 }
 
-extension MonthAxisView: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+extension WeekAxisView: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.count
     }
@@ -138,23 +136,23 @@ extension MonthAxisView: UICollectionViewDataSource, UICollectionViewDelegate, U
     }
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if let monthCell = collectionView.dequeueReusableCell(withReuseIdentifier: NSStringFromClass(MonthAxisCell.classForCoder()), for: indexPath) as? MonthAxisCell {
-            monthCell.backgroundColor = .clear
-            monthCell.itemView.backgroundColor = .clear
-            monthCell.itemView.delegate = self
-            monthCell.itemView.dataSource = self
-            monthCell.itemView.theme = self.theme
-            monthCell.itemView.axisView = self
-            let yearMonth = self.from.next(month: indexPath.row)
-            monthCell.itemView.yearMonth = yearMonth
-            return monthCell
+        if let weekCell = collectionView.dequeueReusableCell(withReuseIdentifier: NSStringFromClass(WeekAxisCell.classForCoder()), for: indexPath) as? WeekAxisCell {
+            weekCell.backgroundColor = .clear
+            weekCell.itemView.backgroundColor = .clear
+            weekCell.itemView.delegate = self
+            weekCell.itemView.dataSource = self
+            weekCell.itemView.theme = self.theme
+            weekCell.itemView.axisView = self
+            let yearWeek = self.from.next(week: indexPath.row)
+            weekCell.itemView.yearWeek = yearWeek
+            return weekCell
         }
         return UICollectionViewCell()
     }
 
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView == self.collectionView {
-            if let frame = self.currentMonthView()?.rect(for: self.selectedDate) {
+            if let frame = self.currentWeekView()?.rect(for: self.selectedDate) {
                 let offset = scrollView.contentOffset.x - self.bounds.size.width * CGFloat(self.currentPage())
 //                self.indicatorView.snp.updateConstraints { (maker) in
 //                    maker.leading.equalToSuperview().offset(frame.origin.x - offset)
@@ -177,25 +175,25 @@ extension MonthAxisView: UICollectionViewDataSource, UICollectionViewDelegate, U
     }
 }
 
-extension MonthAxisView: MonthViewDelegate, MonthViewDataSource {
-    public func monthView(_ monthView: MonthView, dataSourceForDate date: Date) -> CalendarViewDateDataSource {
-        return self.dataSource?.monthAxisView(self, dataSourceForDate: date) ?? CalendarViewDateDataSource()
+extension WeekAxisView: WeekViewDelegate, WeekViewDataSource {
+    public func weekView(_ weekView: WeekView, dataSourceForDate date: Date) -> CalendarViewDateDataSource {
+        return self.dataSource?.weekAxisView(self, dataSourceForDate: date) ?? CalendarViewDateDataSource()
     }
     
-    public func monthView(_ monthView: MonthView, willSelectDate date: Date) {
+    public func weekView(_ weekView: WeekView, willSelectDate date: Date) {
         
     }
     
-    public func monthView(_ monthView: MonthView, didSelectDate date : Date) {
+    public func weekView(_ weekView: WeekView, didSelectDate date : Date) {
         self.selectedDate = date
         self.didSelect(date: date)
     }
     
-    public func monthView(_ monthView: MonthView, willDeselectDate date: Date) {
+    public func weekView(_ weekView: WeekView, willDeselectDate date: Date) {
         
     }
     
-    public func monthView(_ monthView: MonthView, didDeselectDate date: Date) {
+    public func weekView(_ weekView: WeekView, didDeselectDate date: Date) {
 
     }
 }

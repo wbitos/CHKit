@@ -1,5 +1,5 @@
 //
-//  MonthGridCell.swift
+//  DateGridCell.swift
 //  Coco
 //
 //  Created by suyu on 2019/8/28.
@@ -10,9 +10,9 @@ import UIKit
 import SnapKit
 
 @IBDesignable
-open class MonthGridCell: CHCollectionViewCell {
-    open lazy var gridView: MonthGridView = { () -> MonthGridView in
-        let gridViwe = MonthGridView(frame: .zero)
+open class DateGridCell: CHCollectionViewCell {
+    open lazy var gridView: DateGridView = { () -> DateGridView in
+        let gridViwe = DateGridView(frame: .zero)
         return gridViwe
     }()
     

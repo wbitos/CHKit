@@ -1,5 +1,5 @@
 //
-//  MonthGridView.swift
+//  DateGridView.swift
 //  CHKit
 //
 //  Created by 王义平 on 2020/10/29.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-open class MonthGridView: CHView {
+open class DateGridView: CHView {
 
     open class DateView: CHView {
         open var dayLabel: UILabel = { () -> UILabel in

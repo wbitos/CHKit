@@ -21,6 +21,14 @@ public extension Date {
         return calendar.component(Calendar.Component.month, from: self)
     }
     
+    func hour(calendar: Foundation.Calendar = Calendar.current) -> Int {
+        return calendar.component(Calendar.Component.hour, from: self)
+    }
+    
+    func minute(calendar: Foundation.Calendar = Calendar.current) -> Int {
+        return calendar.component(Calendar.Component.minute, from: self)
+    }
+    
     func component(component: Calendar.Component, of calendar: Foundation.Calendar = Calendar.current) -> Int {
         return calendar.component(component, from: self)
     }
@@ -29,6 +37,10 @@ public extension Date {
         let year = calendar.component(Calendar.Component.year, from: self)
         let month = calendar.component(Calendar.Component.month, from: self)
         return YearMonth(year: year, month: month)
+    }
+    
+    func yearWeek(calendar: Foundation.Calendar = Calendar.current, firstDayOfWeek: WeekDay) -> YearWeek {
+        return YearWeek.current()
     }
     
     func isToday(calendar: Foundation.Calendar = Calendar.current) -> Bool {
